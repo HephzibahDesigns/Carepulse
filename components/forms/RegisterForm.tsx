@@ -37,6 +37,7 @@ const RegisterForm = ({ user }: { user: User }) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      gender: user.gender.toLowerCase() as "male" | "female" | "other",
     },
   });
 
@@ -151,7 +152,7 @@ const RegisterForm = ({ user }: { user: User }) => {
               fieldType={FormFieldType.DATE_PICKER}
               control={form.control}
               name="birthDate"
-              label="Date of birth"
+              label="Date of Birth"
             />
 
             <CustomFormField

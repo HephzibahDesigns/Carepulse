@@ -10,19 +10,44 @@ import { Appointment } from "@/types/appwrite.types";
 import { AppointmentModal } from "../AppointmentModal";
 import { StatusBadge } from "../StatusBadge";
 
+import { getUser } from "@/lib/actions/patient.actions";
+import { useEffect, useState } from "react";
+
+// Helper component to fetch and display user name by userId
+function PatientName({ userId }: { userId?: string }) {
+  const [userName, setUserName] = useState<string>("");
+
+  useEffect(() => {
+    async function fetchUser() {
+      if (!userId) return;
+
+      const user = (await getUser(userId)) as { name?: string } | undefined;
+      if (user && user.name) {
+        setUserName(user.name);
+      } else {
+        setUserName("Unknown");
+      }
+    }
+    fetchUser();
+  }, [userId]);
+
+  return (
+    <p className="text-14-medium text-white">{userName || "Loading..."}</p>
+  );
+}
+
 export const columns: ColumnDef<Appointment>[] = [
   {
-    header: "#",
-    cell: ({ row }) => {
-      return <p className="text-14-medium ">{row.index + 1}</p>;
-    },
+    header: "ID",
+    cell: ({ row }) => <p className="text-14-medium ">{row.index + 1}</p>,
   },
   {
     accessorKey: "patient",
     header: "Patient",
     cell: ({ row }) => {
       const appointment = row.original;
-      return <p className="text-14-medium ">{appointment.patient.name}</p>;
+      // Use the PatientName component here to fetch and display user name by userId
+      return <PatientName userId={appointment.userId} />;
     },
   },
   {
@@ -54,7 +79,6 @@ export const columns: ColumnDef<Appointment>[] = [
     header: "Doctor",
     cell: ({ row }) => {
       const appointment = row.original;
-
       const doctor = Doctors.find(
         (doctor) => doctor.name === appointment.primaryPhysician
       );
@@ -79,8 +103,12 @@ export const columns: ColumnDef<Appointment>[] = [
     cell: ({ row }) => {
       const appointment = row.original;
 
+      // If you still want to show userName here, you can keep the state/fetch or just remove it
+      // I suggest removing it to avoid duplicate fetches
+
       return (
         <div className="flex gap-1">
+          {/* Actions buttons */}
           <AppointmentModal
             patientId={appointment.patient.$id}
             userId={appointment.userId}
