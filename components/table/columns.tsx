@@ -12,9 +12,15 @@ import { StatusBadge } from "../StatusBadge";
 
 import { getUser } from "@/lib/actions/patient.actions";
 import { useEffect, useState } from "react";
+import PatientDetailsModal from "../PatientDetailsModal";
+
+interface PatientNameProps {
+  userId: string | undefined; // <--- Add userId here
+  searchParams?: { [key: string]: string | string[] | undefined }; // Keep if relevant
+}
 
 // Helper component to fetch and display user name by userId
-function PatientName({ userId }: { userId?: string }) {
+function PatientName({ userId }: PatientNameProps) {
   const [userName, setUserName] = useState<string>("");
 
   useEffect(() => {
@@ -32,7 +38,9 @@ function PatientName({ userId }: { userId?: string }) {
   }, [userId]);
 
   return (
-    <p className="text-14-medium text-white">{userName || "Loading..."}</p>
+    <>
+      <p className="text-14-medium text-white">{userName || "Loading..."}</p>
+    </>
   );
 }
 
@@ -103,28 +111,30 @@ export const columns: ColumnDef<Appointment>[] = [
     cell: ({ row }) => {
       const appointment = row.original;
 
-      // If you still want to show userName here, you can keep the state/fetch or just remove it
-      // I suggest removing it to avoid duplicate fetches
-
       return (
-        <div className="flex gap-1">
-          {/* Actions buttons */}
-          <AppointmentModal
-            patientId={appointment.patient.$id}
-            userId={appointment.userId}
-            appointment={appointment}
-            type="schedule"
-            title="Schedule Appointment"
-            description="Please confirm the following details to schedule."
-          />
-          <AppointmentModal
-            patientId={appointment.patient.$id}
-            userId={appointment.userId}
-            appointment={appointment}
-            type="cancel"
-            title="Cancel Appointment"
-            description="Are you sure you want to cancel your appointment?"
-          />
+        <div className="flex justify-center items-center">
+          <div className="flex gap-1">
+            {/* Actions buttons */}
+            <AppointmentModal
+              patientId={appointment.patient.$id}
+              userId={appointment.userId}
+              appointment={appointment}
+              type="schedule"
+              title="Schedule Appointment"
+              description="Please confirm the following details to schedule."
+            />
+            <AppointmentModal
+              patientId={appointment.patient.$id}
+              userId={appointment.userId}
+              appointment={appointment}
+              type="cancel"
+              title="Cancel Appointment"
+              description="Are you sure you want to cancel your appointment?"
+            />
+          </div>
+          <div className="flex gap-1">
+            <PatientDetailsModal userId={appointment.userId} />
+          </div>
         </div>
       );
     },
