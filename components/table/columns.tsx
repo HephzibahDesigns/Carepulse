@@ -15,8 +15,8 @@ import { useEffect, useState } from "react";
 import PatientDetailsModal from "../PatientDetailsModal";
 
 interface PatientNameProps {
-  userId: string | undefined; // <--- Add userId here
-  searchParams?: { [key: string]: string | string[] | undefined }; // Keep if relevant
+  userId: string | undefined;
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 // Helper component to fetch and display user name by userId
@@ -35,7 +35,7 @@ function PatientName({ userId }: PatientNameProps) {
       }
     }
     fetchUser();
-  }, [userId]);
+  }, []);
 
   return (
     <>
